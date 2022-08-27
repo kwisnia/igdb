@@ -3,9 +3,8 @@ package main
 import (
 	"flag"
 	"fmt"
+	"github.com/kwisnia/igdb/v2"
 	"log"
-
-	"github.com/kwisnia/igdb"
 )
 
 var key string

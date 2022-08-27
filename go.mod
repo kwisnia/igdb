@@ -1,4 +1,4 @@
-module github.com/kwisnia/igdb
+module github.com/kwisnia/igdb/v2
 
 go 1.13
 
