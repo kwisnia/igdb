@@ -25,7 +25,7 @@ type Company struct {
 	CreatedAt          int                     `json:"created_at"`
 	Description        string                  `json:"description"`
 	Developed          []GameWrapper           `json:"developed"`
-	Logo               int                     `json:"logo"`
+	Logo               CompanyLogoWrapper      `json:"logo"`
 	Name               string                  `json:"name"`
 	Parent             *CompanyWrapper         `json:"parent"`
 	Published          []GameWrapper           `json:"published"`

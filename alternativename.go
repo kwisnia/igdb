@@ -13,10 +13,10 @@ import (
 // name for a particular video game.
 // For more information visit: https://api-docs.igdb.com/#alternative-name
 type AlternativeName struct {
-	ID      int    `json:"id"`
-	Comment string `json:"comment"`
-	Game    int    `json:"game"`
-	Name    string `json:"name"`
+	ID      int         `json:"id"`
+	Comment string      `json:"comment"`
+	Game    GameWrapper `json:"game"`
+	Name    string      `json:"name"`
 }
 
 // AlternativeNameService handles all the API calls for the IGDB AlternativeName endpoint.

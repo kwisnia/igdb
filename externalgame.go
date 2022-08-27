@@ -19,6 +19,7 @@ type ExternalGame struct {
 	CreatedAt int                  `json:"created_at"`
 	Game      GameWrapper          `json:"game"`
 	Name      string               `json:"name"`
+	Platform  PlatformWrapper      `json:"platform"`
 	UID       string               `json:"uid"`
 	UpdatedAt int                  `json:"updated_at"`
 	Url       string               `json:"url"`

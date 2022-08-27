@@ -51,6 +51,8 @@ type Game struct {
 	Rating                float64                    `json:"rating"`
 	RatingCount           int                        `json:"rating_count"`
 	ReleaseDates          []ReleaseDateWrapper       `json:"release_dates"`
+	Remakes               []GameWrapper              `json:"remakes"`
+	Remasters             []GameWrapper              `json:"remasters"`
 	Screenshots           []ScreenshotWrapper        `json:"screenshots"`
 	SimilarGames          []GameWrapper              `json:"similar_games"`
 	Slug                  string                     `json:"slug"`
