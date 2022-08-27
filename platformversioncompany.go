@@ -1,6 +1,7 @@
 package igdb
 
 import (
+	"encoding/json"
 	"github.com/Henry-Sarabia/sliceconv"
 	"github.com/pkg/errors"
 	"strconv"
@@ -11,11 +12,11 @@ import (
 // PlatformVersionCompany represents a platform developer.
 // For more information visit: https://api-docs.igdb.com/#platform-version-company
 type PlatformVersionCompany struct {
-	ID           int    `json:"id"`
-	Comment      string `json:"comment"`
-	Company      int    `json:"company"`
-	Developer    bool   `json:"developer"`
-	Manufacturer bool   `json:"manufacturer"`
+	ID           int            `json:"id"`
+	Comment      string         `json:"comment"`
+	Company      CompanyWrapper `json:"company"`
+	Developer    bool           `json:"developer"`
+	Manufacturer bool           `json:"manufacturer"`
 }
 
 // PlatformVersionCompanyService handles all the API calls for the IGDB PlatformVersionCompany endpoint.
@@ -101,4 +102,16 @@ func (ps *PlatformVersionCompanyService) Fields() ([]string, error) {
 	}
 
 	return f, nil
+}
+
+type PlatformVersionCompanyWrapper struct {
+	PlatformVersionCompany
+}
+
+func (pvc *PlatformVersionCompanyWrapper) UnmarshalJSON(data []byte) error {
+	if id, err := strconv.Atoi(string(data)); err == nil {
+		pvc.ID = id
+		return nil
+	}
+	return json.Unmarshal(data, &pvc.PlatformVersionCompany)
 }

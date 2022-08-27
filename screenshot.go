@@ -1,6 +1,7 @@
 package igdb
 
 import (
+	"encoding/json"
 	"strconv"
 
 	"github.com/Henry-Sarabia/sliceconv"
@@ -11,8 +12,8 @@ import (
 // For more information visit: https://api-docs.igdb.com/#screenshot
 type Screenshot struct {
 	Image
-	ID   int `json:"id"`
-	Game int `json:"game"`
+	ID   int         `json:"id"`
+	Game GameWrapper `json:"game"`
 }
 
 // ScreenshotService handles all the API calls for the IGDB Screenshot endpoint.
@@ -98,4 +99,16 @@ func (ss *ScreenshotService) Fields() ([]string, error) {
 	}
 
 	return f, nil
+}
+
+type ScreenshotWrapper struct {
+	Screenshot
+}
+
+func (s *ScreenshotWrapper) UnmarshalJSON(data []byte) error {
+	if id, err := strconv.Atoi(string(data)); err == nil {
+		s.ID = id
+		return nil
+	}
+	return json.Unmarshal(data, &s.Screenshot)
 }

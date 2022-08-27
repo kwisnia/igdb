@@ -1,6 +1,7 @@
 package igdb
 
 import (
+	"encoding/json"
 	"github.com/Henry-Sarabia/sliceconv"
 	"github.com/pkg/errors"
 	"strconv"
@@ -11,16 +12,16 @@ import (
 // GameEngine represents a video game engine such as Unreal Engine.
 // For more information visit: https://api-docs.igdb.com/#game-engine
 type GameEngine struct {
-	ID          int    `json:"id"`
-	Companies   []int  `json:"companies"`
-	CreatedAt   int    `json:"created_at"`
-	Description string `json:"description"`
-	Logo        int    `json:"logo"`
-	Name        string `json:"name"`
-	Platforms   []int  `json:"platforms"`
-	Slug        string `json:"slug"`
-	UpdatedAt   int    `json:"updated_at"`
-	URL         string `json:"url"`
+	ID          int                   `json:"id"`
+	Companies   []CompanyWrapper      `json:"companies"`
+	CreatedAt   int                   `json:"created_at"`
+	Description string                `json:"description"`
+	Logo        GameEngineLogoWrapper `json:"logo"`
+	Name        string                `json:"name"`
+	Platforms   []PlatformWrapper     `json:"platforms"`
+	Slug        string                `json:"slug"`
+	UpdatedAt   int                   `json:"updated_at"`
+	URL         string                `json:"url"`
 }
 
 // GameEngineService handles all the API calls for the IGDB GameEngine endpoint.
@@ -106,4 +107,16 @@ func (gs *GameEngineService) Fields() ([]string, error) {
 	}
 
 	return f, nil
+}
+
+type GameEngineWrapper struct {
+	GameEngine
+}
+
+func (ge *GameEngineWrapper) UnmarshalJSON(data []byte) error {
+	if id, err := strconv.Atoi(string(data)); err == nil {
+		ge.ID = id
+		return nil
+	}
+	return json.Unmarshal(data, &ge.GameEngine)
 }

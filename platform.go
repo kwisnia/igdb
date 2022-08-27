@@ -1,6 +1,7 @@
 package igdb
 
 import (
+	"encoding/json"
 	"github.com/Henry-Sarabia/sliceconv"
 	"github.com/pkg/errors"
 	"strconv"
@@ -12,21 +13,21 @@ import (
 // or game delivery network.
 // For more information visit: https://api-docs.igdb.com/#platform
 type Platform struct {
-	ID              int              `json:"id"`
-	Abbreviation    string           `json:"abbreviation"`
-	AlternativeName string           `json:"alternative_name"`
-	Category        PlatformCategory `json:"category"`
-	CreatedAt       int              `json:"created_at"`
-	Generation      int              `json:"generation"`
-	Name            string           `json:"name"`
-	PlatformLogo    int              `json:"platform_logo"`
-	ProductFamily   int              `json:"product_family"`
-	Slug            string           `json:"slug"`
-	Summary         string           `json:"summary"`
-	UpdatedAt       int              `json:"updated_at"`
-	URL             string           `json:"url"`
-	Versions        []int            `json:"versions"`
-	Websites        []int            `json:"websites"`
+	ID              int                      `json:"id"`
+	Abbreviation    string                   `json:"abbreviation"`
+	AlternativeName string                   `json:"alternative_name"`
+	Category        PlatformCategory         `json:"category"`
+	CreatedAt       int                      `json:"created_at"`
+	Generation      int                      `json:"generation"`
+	Name            string                   `json:"name"`
+	PlatformLogo    PlatformLogoWrapper      `json:"platform_logo"`
+	ProductFamily   PlatformFamilyWrapper    `json:"product_family"`
+	Slug            string                   `json:"slug"`
+	Summary         string                   `json:"summary"`
+	UpdatedAt       int                      `json:"updated_at"`
+	URL             string                   `json:"url"`
+	Versions        []PlatformVersionWrapper `json:"versions"`
+	Websites        []PlatformWebsiteWrapper `json:"websites"`
 }
 
 //go:generate stringer -type=PlatformCategory
@@ -142,4 +143,16 @@ func (ps *PlatformService) Fields() ([]string, error) {
 	}
 
 	return f, nil
+}
+
+type PlatformWrapper struct {
+	Platform
+}
+
+func (p *PlatformWrapper) UnmarshalJSON(data []byte) error {
+	if id, err := strconv.Atoi(string(data)); err == nil {
+		p.ID = id
+		return nil
+	}
+	return json.Unmarshal(data, &p.Platform)
 }

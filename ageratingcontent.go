@@ -1,6 +1,7 @@
 package igdb
 
 import (
+	"encoding/json"
 	"github.com/Henry-Sarabia/sliceconv"
 	"github.com/pkg/errors"
 	"strconv"
@@ -109,4 +110,16 @@ func (as *AgeRatingContentService) Fields() ([]string, error) {
 	}
 
 	return f, nil
+}
+
+type AgeRatingContentWrapper struct {
+	AgeRatingContent
+}
+
+func (arc *AgeRatingContentWrapper) UnmarshalJSON(data []byte) error {
+	if id, err := strconv.Atoi(string(data)); err == nil {
+		arc.ID = id
+		return nil
+	}
+	return json.Unmarshal(data, &arc.AgeRatingContent)
 }

@@ -5,7 +5,7 @@ import (
 	"fmt"
 	"log"
 
-	"github.com/Henry-Sarabia/igdb/v2"
+	"github.com/kwisnia/igdb"
 )
 
 var key string
@@ -58,7 +58,7 @@ func main() {
 
 	fmt.Println("Top 5 PS4 Games:")
 	for _, game := range PS4 {
-		cover, err := c.Covers.Get(game.Cover, igdb.SetFields("image_id")) // retrieve cover IDs
+		cover, err := c.Covers.Get(game.Cover.ID, igdb.SetFields("image_id")) // retrieve cover IDs
 		if err != nil {
 			log.Fatal(err)
 		}
@@ -71,7 +71,7 @@ func main() {
 
 	fmt.Println("\nTop 5 XBOX Games:")
 	for _, game := range XBOX {
-		cover, err := c.Covers.Get(game.Cover, igdb.SetFields("id", "image_id")) // retrieve cover IDs
+		cover, err := c.Covers.Get(game.Cover.ID, igdb.SetFields("id", "image_id")) // retrieve cover IDs
 		if err != nil {
 			log.Fatal(err)
 		}

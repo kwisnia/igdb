@@ -1,10 +1,15 @@
 package igdb
 
 import (
+	"encoding/json"
 	"github.com/Henry-Sarabia/sliceconv"
 	"github.com/pkg/errors"
 	"strconv"
 )
+
+type CompanyWrapper struct {
+	Company
+}
 
 //go:generate gomodifytags -file $GOFILE -struct Company -add-tags json -w
 
@@ -12,24 +17,24 @@ import (
 // This includes both publishers and developers.
 // For more information visit: https://api-docs.igdb.com/#company
 type Company struct {
-	ID                 int          `json:"id"`
-	ChangeDate         int          `json:"change_date"`
-	ChangeDateCategory DateCategory `json:"change_date_category"`
-	ChangedCompanyID   int          `json:"changed_company_id"`
-	Country            int          `json:"country"`
-	CreatedAt          int          `json:"created_at"`
-	Description        string       `json:"description"`
-	Developed          []int        `json:"developed"`
-	Logo               int          `json:"logo"`
-	Name               string       `json:"name"`
-	Parent             int          `json:"parent"`
-	Published          []int        `json:"published"`
-	Slug               string       `json:"slug"`
-	StartDate          int          `json:"start_date"`
-	StartDateCategory  DateCategory `json:"start_date_category"`
-	UpdatedAt          int          `json:"updated_at"`
-	URL                string       `json:"url"`
-	Websites           []int        `json:"websites"`
+	ID                 int                     `json:"id"`
+	ChangeDate         int                     `json:"change_date"`
+	ChangeDateCategory DateCategory            `json:"change_date_category"`
+	ChangedCompanyID   *CompanyWrapper         `json:"changed_company_id"`
+	Country            int                     `json:"country"`
+	CreatedAt          int                     `json:"created_at"`
+	Description        string                  `json:"description"`
+	Developed          []GameWrapper           `json:"developed"`
+	Logo               int                     `json:"logo"`
+	Name               string                  `json:"name"`
+	Parent             *CompanyWrapper         `json:"parent"`
+	Published          []GameWrapper           `json:"published"`
+	Slug               string                  `json:"slug"`
+	StartDate          int                     `json:"start_date"`
+	StartDateCategory  DateCategory            `json:"start_date_category"`
+	UpdatedAt          int                     `json:"updated_at"`
+	URL                string                  `json:"url"`
+	Websites           []CompanyWebsiteWrapper `json:"websites"`
 }
 
 // CompanyService handles all the API calls for the IGDB Company endpoint.
@@ -115,4 +120,12 @@ func (cs *CompanyService) Fields() ([]string, error) {
 	}
 
 	return f, nil
+}
+
+func (c *CompanyWrapper) UnmarshalJSON(data []byte) error {
+	if id, err := strconv.Atoi(string(data)); err == nil {
+		c.ID = id
+		return nil
+	}
+	return json.Unmarshal(data, &c.Company)
 }

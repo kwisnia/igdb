@@ -1,6 +1,7 @@
 package igdb
 
 import (
+	"encoding/json"
 	"github.com/Henry-Sarabia/sliceconv"
 	"github.com/pkg/errors"
 	"strconv"
@@ -11,20 +12,20 @@ import (
 // Character represents a video game character.
 // For more information visit: https://api-docs.igdb.com/#character
 type Character struct {
-	ID          int              `json:"ID"`
-	AKAS        []string         `json:"akas"`
-	CountryName string           `json:"country_name"`
-	CreatedAt   int              `json:"created_at"`
-	Description string           `json:"description"`
-	Games       []int            `json:"games"`
-	Gender      CharacterGender  `json:"gender"`
-	MugShot     int              `json:"mug_shot"`
-	Name        string           `json:"name"`
-	People      []int            `json:"people"`
-	Slug        string           `json:"slug"`
-	Species     CharacterSpecies `json:"species"`
-	UpdatedAt   int              `json:"updated_at"`
-	URL         string           `json:"url"`
+	ID          int                     `json:"ID"`
+	AKAS        []string                `json:"akas"`
+	CountryName string                  `json:"country_name"`
+	CreatedAt   int                     `json:"created_at"`
+	Description string                  `json:"description"`
+	Games       []GameWrapper           `json:"games"`
+	Gender      CharacterGender         `json:"gender"`
+	MugShot     CharacterMugshotWrapper `json:"mug_shot"`
+	Name        string                  `json:"name"`
+	People      []int                   `json:"people"`
+	Slug        string                  `json:"slug"`
+	Species     CharacterSpecies        `json:"species"`
+	UpdatedAt   int                     `json:"updated_at"`
+	URL         string                  `json:"url"`
 }
 
 // CharacterGender specifies a specific gender.
@@ -149,4 +150,16 @@ func (cs *CharacterService) Fields() ([]string, error) {
 	}
 
 	return f, nil
+}
+
+type CharacterWrapper struct {
+	Character
+}
+
+func (c *CharacterWrapper) UnmarshalJSON(data []byte) error {
+	if id, err := strconv.Atoi(string(data)); err == nil {
+		c.ID = id
+		return nil
+	}
+	return json.Unmarshal(data, &c.Character)
 }

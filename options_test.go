@@ -230,12 +230,12 @@ func TestSetFields(t *testing.T) {
 	}{
 		{"Single non-empty field", []string{"name"}, "name", nil},
 		{"Multiple non-empty fields", []string{"name", "hypes", "rating"}, "name,hypes,rating", nil},
+		{"Single expanded field", []string{"game.name"}, "", nil},
+		{"Multiple expanded fields", []string{"game.name", "game.id"}, "", nil},
 		{"Empty fields slice", []string{}, "", ErrEmptyFields},
 		{"Single empty field", []string{"  "}, "", ErrEmptyFields},
 		{"Multiple empty fields", []string{"", " ", "", ""}, "", ErrEmptyFields},
 		{"Mixed empty and non-empty fields", []string{"", "id", "  ", "url"}, "", ErrEmptyFields},
-		{"Single expanded field", []string{"game.name"}, "", ErrExpandedField},
-		{"Multiple expanded fields", []string{"game.name", "game.id"}, "", ErrExpandedField},
 	}
 
 	for _, test := range tests {
@@ -270,12 +270,12 @@ func TestSetExclude(t *testing.T) {
 	}{
 		{"Single non-empty field", []string{"name"}, "name", nil},
 		{"Multiple non-empty fields", []string{"name", "hypes", "rating"}, "name,hypes,rating", nil},
+		{"Single expanded field", []string{"game.name"}, "", nil},
+		{"Multiple expanded fields", []string{"game.name", "game.id"}, "", nil},
 		{"Empty fields slice", []string{}, "", ErrEmptyFields},
 		{"Single empty field", []string{"  "}, "", ErrEmptyFields},
 		{"Multiple empty fields", []string{"", " ", "", ""}, "", ErrEmptyFields},
 		{"Mixed empty and non-empty fields", []string{"", "id", "  ", "url"}, "", ErrEmptyFields},
-		{"Single expanded field", []string{"game.name"}, "", ErrExpandedField},
-		{"Multiple expanded fields", []string{"game.name", "game.id"}, "", ErrExpandedField},
 	}
 
 	for _, test := range tests {

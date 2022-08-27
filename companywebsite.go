@@ -1,6 +1,7 @@
 package igdb
 
 import (
+	"encoding/json"
 	"github.com/Henry-Sarabia/sliceconv"
 	"github.com/pkg/errors"
 	"strconv"
@@ -100,4 +101,16 @@ func (zs *CompanyWebsiteService) Fields() ([]string, error) {
 	}
 
 	return f, nil
+}
+
+type CompanyWebsiteWrapper struct {
+	CompanyWebsite
+}
+
+func (cw *CompanyWebsiteWrapper) UnmarshalJSON(data []byte) error {
+	if id, err := strconv.Atoi(string(data)); err == nil {
+		cw.ID = id
+		return nil
+	}
+	return json.Unmarshal(data, &cw.CompanyWebsite)
 }

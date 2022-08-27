@@ -1,6 +1,7 @@
 package igdb
 
 import (
+	"encoding/json"
 	"github.com/Henry-Sarabia/sliceconv"
 	"github.com/pkg/errors"
 	"strconv"
@@ -102,4 +103,16 @@ func (gs *GenreService) Fields() ([]string, error) {
 	}
 
 	return f, nil
+}
+
+type GenreWrapper struct {
+	Genre
+}
+
+func (g *GenreWrapper) UnmarshalJSON(data []byte) error {
+	if id, err := strconv.Atoi(string(data)); err == nil {
+		g.ID = id
+		return nil
+	}
+	return json.Unmarshal(data, &g.Genre)
 }

@@ -1,6 +1,7 @@
 package igdb
 
 import (
+	"encoding/json"
 	"github.com/Henry-Sarabia/sliceconv"
 	"github.com/pkg/errors"
 	"strconv"
@@ -12,17 +13,17 @@ import (
 // Used to dig deeper into release dates, platforms, and versions.
 // For more information visit: https://api-docs.igdb.com/#release-date
 type ReleaseDate struct {
-	ID        int            `json:"id"`
-	Category  DateCategory   `json:"category"`
-	CreatedAt int            `json:"created_at"`
-	Date      int            `json:"date"`
-	Game      int            `json:"game"`
-	Human     string         `json:"human"`
-	M         int            `json:"m"`
-	Platform  int            `json:"platform"`
-	Region    RegionCategory `json:"region"`
-	UpdatedAt int            `json:"updated_at"`
-	Y         int            `json:"y"`
+	ID        int             `json:"id"`
+	Category  DateCategory    `json:"category"`
+	CreatedAt int             `json:"created_at"`
+	Date      int             `json:"date"`
+	Game      GameWrapper     `json:"game"`
+	Human     string          `json:"human"`
+	M         int             `json:"m"`
+	Platform  PlatformWrapper `json:"platform"`
+	Region    RegionCategory  `json:"region"`
+	UpdatedAt int             `json:"updated_at"`
+	Y         int             `json:"y"`
 }
 
 //go:generate stringer -type=DateCategory,RegionCategory
@@ -55,6 +56,8 @@ const (
 	RegionChina
 	RegionAsia
 	RegionWorldwide
+	RegionKorea
+	RegionBrazil
 )
 
 // ReleaseDateService handles all the API calls for the IGDB ReleaseDate endpoint.
@@ -140,4 +143,16 @@ func (rs *ReleaseDateService) Fields() ([]string, error) {
 	}
 
 	return f, nil
+}
+
+type ReleaseDateWrapper struct {
+	ReleaseDate
+}
+
+func (rd *ReleaseDateWrapper) UnmarshalJSON(data []byte) error {
+	if id, err := strconv.Atoi(string(data)); err == nil {
+		rd.ID = id
+		return nil
+	}
+	return json.Unmarshal(data, &rd.ReleaseDate)
 }

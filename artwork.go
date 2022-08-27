@@ -1,6 +1,7 @@
 package igdb
 
 import (
+	"encoding/json"
 	"github.com/Henry-Sarabia/sliceconv"
 	"github.com/pkg/errors"
 	"strconv"
@@ -14,8 +15,8 @@ type ArtworkService service
 // For more information visit: https://api-docs.igdb.com/#artwork
 type Artwork struct {
 	Image
-	ID   int `json:"id"`
-	Game int `json:"game"`
+	ID   int         `json:"id"`
+	Game GameWrapper `json:"game"`
 }
 
 // Get returns a single Artwork identified by the provided IGDB ID. Provide
@@ -98,4 +99,16 @@ func (as *ArtworkService) Fields() ([]string, error) {
 	}
 
 	return f, nil
+}
+
+type ArtworkWrapper struct {
+	Artwork
+}
+
+func (a *ArtworkWrapper) UnmarshalJSON(data []byte) error {
+	if id, err := strconv.Atoi(string(data)); err == nil {
+		a.ID = id
+		return nil
+	}
+	return json.Unmarshal(data, &a.Artwork)
 }

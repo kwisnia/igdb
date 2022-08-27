@@ -1,6 +1,7 @@
 package igdb
 
 import (
+	"encoding/json"
 	"github.com/Henry-Sarabia/sliceconv"
 	"github.com/pkg/errors"
 	"strconv"
@@ -11,6 +12,7 @@ import (
 // GameMode represents a video game mode such as single or multi player.
 // For more information visit: https://api-docs.igdb.com/#game-mode
 type GameMode struct {
+	ID        int    `json:"id"`
 	CreatedAt int    `json:"created_at"`
 	Name      string `json:"name"`
 	Slug      string `json:"slug"`
@@ -101,4 +103,16 @@ func (gs *GameModeService) Fields() ([]string, error) {
 	}
 
 	return f, nil
+}
+
+type GameModeWrapper struct {
+	GameMode
+}
+
+func (gm *GameModeWrapper) UnmarshalJSON(data []byte) error {
+	if id, err := strconv.Atoi(string(data)); err == nil {
+		gm.ID = id
+		return nil
+	}
+	return json.Unmarshal(data, &gm.GameMode)
 }

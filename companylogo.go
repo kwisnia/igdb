@@ -1,6 +1,7 @@
 package igdb
 
 import (
+	"encoding/json"
 	"github.com/Henry-Sarabia/sliceconv"
 	"github.com/pkg/errors"
 	"strconv"
@@ -96,4 +97,16 @@ func (cs *CompanyLogoService) Fields() ([]string, error) {
 	}
 
 	return f, nil
+}
+
+type CompanyLogoWrapper struct {
+	CompanyLogo
+}
+
+func (cl *CompanyLogoWrapper) UnmarshalJSON(data []byte) error {
+	if id, err := strconv.Atoi(string(data)); err == nil {
+		cl.ID = id
+		return nil
+	}
+	return json.Unmarshal(data, &cl.CompanyLogo)
 }

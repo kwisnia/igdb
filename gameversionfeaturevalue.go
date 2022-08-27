@@ -1,6 +1,7 @@
 package igdb
 
 import (
+	"encoding/json"
 	"github.com/Henry-Sarabia/sliceconv"
 	"github.com/pkg/errors"
 	"strconv"
@@ -11,11 +12,11 @@ import (
 // GameVersionFeatureValue represents the bool/text value of a particular feature.
 // For more information visit: https://api-docs.igdb.com/#game-version-feature-value
 type GameVersionFeatureValue struct {
-	ID              int                     `json:"id"`
-	Game            int                     `json:"game"`
-	GameFeature     int                     `json:"game_feature"`
-	IncludedFeature VersionFeatureInclusion `json:"included_feature"`
-	Note            string                  `json:"note"`
+	ID              int                       `json:"id"`
+	Game            GameWrapper               `json:"game"`
+	GameFeature     GameVersionFeatureWrapper `json:"game_feature"`
+	IncludedFeature VersionFeatureInclusion   `json:"included_feature"`
+	Note            string                    `json:"note"`
 }
 
 //go:generate stringer -type=VersionFeatureInclusion
@@ -113,4 +114,16 @@ func (gs *GameVersionFeatureValueService) Fields() ([]string, error) {
 	}
 
 	return f, nil
+}
+
+type GameVersionFeatureValueWrapper struct {
+	GameVersionFeatureValue
+}
+
+func (featValue *GameVersionFeatureValueWrapper) UnmarshalJSON(data []byte) error {
+	if id, err := strconv.Atoi(string(data)); err == nil {
+		featValue.ID = id
+		return nil
+	}
+	return json.Unmarshal(data, &featValue.GameVersionFeatureValue)
 }

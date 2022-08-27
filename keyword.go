@@ -1,6 +1,7 @@
 package igdb
 
 import (
+	"encoding/json"
 	"strconv"
 
 	"github.com/Henry-Sarabia/sliceconv"
@@ -13,6 +14,7 @@ import (
 // such as "World War 2" or "Steampunk".
 // For more information visit: https://api-docs.igdb.com/#keyword
 type Keyword struct {
+	ID        int    `json:"id"`
 	CreatedAt int    `json:"created_at"`
 	Name      string `json:"name"`
 	Slug      string `json:"slug"`
@@ -103,4 +105,16 @@ func (ks *KeywordService) Fields() ([]string, error) {
 	}
 
 	return f, nil
+}
+
+type KeywordWrapper struct {
+	Keyword
+}
+
+func (k *KeywordWrapper) UnmarshalJSON(data []byte) error {
+	if id, err := strconv.Atoi(string(data)); err == nil {
+		k.ID = id
+		return nil
+	}
+	return json.Unmarshal(data, &k.Keyword)
 }

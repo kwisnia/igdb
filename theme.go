@@ -1,6 +1,7 @@
 package igdb
 
 import (
+	"encoding/json"
 	"github.com/Henry-Sarabia/sliceconv"
 	"github.com/pkg/errors"
 	"strconv"
@@ -117,4 +118,16 @@ func (ts *ThemeService) Fields() ([]string, error) {
 	}
 
 	return f, nil
+}
+
+type ThemeWrapper struct {
+	Theme
+}
+
+func (t *ThemeWrapper) UnmarshalJSON(data []byte) error {
+	if id, err := strconv.Atoi(string(data)); err == nil {
+		t.ID = id
+		return nil
+	}
+	return json.Unmarshal(data, &t.Theme)
 }

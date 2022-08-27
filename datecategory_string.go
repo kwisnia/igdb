@@ -40,11 +40,13 @@ func _() {
 	_ = x[RegionChina-6]
 	_ = x[RegionAsia-7]
 	_ = x[RegionWorldwide-8]
+	_ = x[RegionKorea-9]
+	_ = x[RegionBrazil-10]
 }
 
-const _RegionCategory_name = "RegionEuropeRegionNorthAmericaRegionAustraliaRegionNewZealandRegionJapanRegionChinaRegionAsiaRegionWorldwide"
+const _RegionCategory_name = "RegionEuropeRegionNorthAmericaRegionAustraliaRegionNewZealandRegionJapanRegionChinaRegionAsiaRegionWorldwideRegionKoreaRegionBrazil"
 
-var _RegionCategory_index = [...]uint8{0, 12, 30, 45, 61, 72, 83, 93, 108}
+var _RegionCategory_index = [...]uint8{0, 12, 30, 45, 61, 72, 83, 93, 108, 119, 131}
 
 func (i RegionCategory) String() string {
 	i -= 1

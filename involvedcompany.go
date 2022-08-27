@@ -1,6 +1,7 @@
 package igdb
 
 import (
+	"encoding/json"
 	"github.com/Henry-Sarabia/sliceconv"
 	"github.com/pkg/errors"
 	"strconv"
@@ -12,15 +13,15 @@ import (
 // of a particular video game.
 // For more information visit: https://api-docs.igdb.com/#involved-company
 type InvolvedCompany struct {
-	ID         int  `json:"id"`
-	Company    int  `json:"company"`
-	CreatedAt  int  `json:"created_at"`
-	Developer  bool `json:"developer"`
-	Game       int  `json:"game"`
-	Porting    bool `json:"porting"`
-	Publisher  bool `json:"publisher"`
-	Supporting bool `json:"supporting"`
-	UpdatedAt  int  `json:"updated_at"`
+	ID         int            `json:"id"`
+	Company    CompanyWrapper `json:"company"`
+	CreatedAt  int            `json:"created_at"`
+	Developer  bool           `json:"developer"`
+	Game       GameWrapper    `json:"game"`
+	Porting    bool           `json:"porting"`
+	Publisher  bool           `json:"publisher"`
+	Supporting bool           `json:"supporting"`
+	UpdatedAt  int            `json:"updated_at"`
 }
 
 // InvolvedCompanyService handles all the API calls for the IGDB InvolvedCompany endpoint.
@@ -106,4 +107,16 @@ func (is *InvolvedCompanyService) Fields() ([]string, error) {
 	}
 
 	return f, nil
+}
+
+type InvolvedCompanyWrapper struct {
+	InvolvedCompany
+}
+
+func (ic *InvolvedCompanyWrapper) UnmarshalJSON(data []byte) error {
+	if id, err := strconv.Atoi(string(data)); err == nil {
+		ic.ID = id
+		return nil
+	}
+	return json.Unmarshal(data, &ic.InvolvedCompany)
 }

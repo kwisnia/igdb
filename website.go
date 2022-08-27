@@ -1,6 +1,7 @@
 package igdb
 
 import (
+	"encoding/json"
 	"github.com/Henry-Sarabia/sliceconv"
 	"github.com/pkg/errors"
 	"strconv"
@@ -19,6 +20,8 @@ type Website struct {
 
 // WebsiteCategory specifies a specific popular website.
 type WebsiteCategory int
+
+//go:generate stringer -type=WebsiteCategory
 
 // Expected WebsiteCategory enums from the IGDB.
 const (
@@ -127,4 +130,16 @@ func (ws *WebsiteService) Fields() ([]string, error) {
 	}
 
 	return f, nil
+}
+
+type WebsiteWrapper struct {
+	Website
+}
+
+func (w *WebsiteWrapper) UnmarshalJSON(data []byte) error {
+	if id, err := strconv.Atoi(string(data)); err == nil {
+		w.ID = id
+		return nil
+	}
+	return json.Unmarshal(data, &w.Website)
 }

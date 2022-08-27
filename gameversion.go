@@ -1,6 +1,7 @@
 package igdb
 
 import (
+	"encoding/json"
 	"github.com/Henry-Sarabia/sliceconv"
 	"github.com/pkg/errors"
 	"strconv"
@@ -11,12 +12,13 @@ import (
 // GameVersion provides details about game editions and versions.
 // For more information visit: https://api-docs.igdb.com/#game-version
 type GameVersion struct {
-	CreatedAt int    `json:"created_at"`
-	Features  []int  `json:"features"`
-	Game      int    `json:"game"`
-	Games     []int  `json:"games"`
-	UpdatedAt int    `json:"updated_at"`
-	URL       string `json:"url"`
+	ID        int                         `json:"id"`
+	CreatedAt int                         `json:"created_at"`
+	Features  []GameVersionFeatureWrapper `json:"features"`
+	Game      GameWrapper                 `json:"game"`
+	Games     []GameWrapper               `json:"games"`
+	UpdatedAt int                         `json:"updated_at"`
+	URL       string                      `json:"url"`
 }
 
 // GameVersionService handles all the API calls for the IGDB GameVersion endpoint.
@@ -102,4 +104,16 @@ func (gs *GameVersionService) Fields() ([]string, error) {
 	}
 
 	return f, nil
+}
+
+type GameVersionWrapper struct {
+	GameVersion
+}
+
+func (gv *GameVersionWrapper) UnmarshalJSON(data []byte) error {
+	if id, err := strconv.Atoi(string(data)); err == nil {
+		gv.ID = id
+		return nil
+	}
+	return json.Unmarshal(data, &gv.GameVersion)
 }

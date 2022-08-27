@@ -1,6 +1,7 @@
 package igdb
 
 import (
+	"encoding/json"
 	"strconv"
 
 	"github.com/Henry-Sarabia/sliceconv"
@@ -16,7 +17,7 @@ type ExternalGame struct {
 	ID        int                  `json:"id"`
 	Category  ExternalGameCategory `json:"category"`
 	CreatedAt int                  `json:"created_at"`
-	Game      int                  `json:"game"`
+	Game      GameWrapper          `json:"game"`
 	Name      string               `json:"name"`
 	UID       string               `json:"uid"`
 	UpdatedAt int                  `json:"updated_at"`
@@ -46,6 +47,28 @@ const (
 	ExternalApple
 	ExternalTwitch
 	ExternalAndroid
+	_
+	_
+	_
+	_
+	ExternalAmazonAsin
+	_
+	ExternalAmazonLuna
+	ExternalAmazonAdg
+	_
+	_
+	ExternalEpicGameStore
+	_
+	ExternalOculus
+	ExternalUtomik
+	ExternalItchIo
+	ExternalXboxMarketplace
+	ExternalKartridge
+	_
+	_
+	_
+	ExternalPlaystationStoreUS
+	ExternalFocusEntertainment
 )
 
 // ExternalGameService handles all the API calls for the IGDB ExternalGame endpoint.
@@ -131,4 +154,16 @@ func (es *ExternalGameService) Fields() ([]string, error) {
 	}
 
 	return f, nil
+}
+
+type ExternalGameWrapper struct {
+	ExternalGame
+}
+
+func (cl *ExternalGameWrapper) UnmarshalJSON(data []byte) error {
+	if id, err := strconv.Atoi(string(data)); err == nil {
+		cl.ID = id
+		return nil
+	}
+	return json.Unmarshal(data, &cl.ExternalGame)
 }

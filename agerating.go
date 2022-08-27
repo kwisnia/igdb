@@ -1,6 +1,7 @@
 package igdb
 
 import (
+	"encoding/json"
 	"github.com/Henry-Sarabia/sliceconv"
 	"github.com/pkg/errors"
 	"strconv"
@@ -11,12 +12,12 @@ import (
 // AgeRating describes an age rating according to various organizations.
 // For more information visit: https://api-docs.igdb.com/#age-rating
 type AgeRating struct {
-	ID                  int               `json:"id"`
-	Category            AgeRatingCategory `json:"category"`
-	ContentDescriptions []int             `json:"content_descriptions"`
-	Rating              AgeRatingEnum     `json:"rating"`
-	RatingCoverURL      string            `json:"rating_cover_url"`
-	Synopsis            string            `json:"synopsis"`
+	ID                  int                       `json:"id"`
+	Category            AgeRatingCategory         `json:"category"`
+	ContentDescriptions []AgeRatingContentWrapper `json:"content_descriptions"`
+	Rating              AgeRatingEnum             `json:"rating"`
+	RatingCoverURL      string                    `json:"rating_cover_url"`
+	Synopsis            string                    `json:"synopsis"`
 }
 
 // AgeRatingCategory specifies a regulatory organization.
@@ -28,6 +29,11 @@ type AgeRatingCategory int
 const (
 	AgeRatingESRB AgeRatingCategory = iota + 1
 	AgeRatingPEGI
+	AgeRatingCERO
+	AgeRatingUSK
+	AgeRatingGRAC
+	AgeRatingCLASSIND
+	AgeRatingACB
 )
 
 // AgeRatingEnum specifies a specific age rating.
@@ -47,6 +53,32 @@ const (
 	AgeRatingT
 	AgeRatingM
 	AgeRatingAO
+	AgeRatingCERO_A
+	AgeRatingCERO_B
+	AgeRatingCERO_C
+	AgeRatingCERO_D
+	AgeRatingCERO_Z
+	AgeRatingUSK_0
+	AgeRatingUSK_6
+	AgeRatingUSK_12
+	AgeRatingUSK_18
+	AgeRatingGRAC_ALL
+	AgeRatingGRAC_Twelve
+	AgeRatingGRAC_Fifteen
+	AgeRatingGRAC_Eighteen
+	AgeRatingGRAC_TESTING
+	AgeRatingCLASS_IND_L
+	AgeRatingCLASS_IND_Ten
+	AgeRatingCLASS_IND_Twelve
+	AgeRatingCLASS_IND_Fourteen
+	AgeRatingCLASS_IND_Sixteen
+	AgeRatingCLASS_IND_Eighteen
+	AgeRatingACB_G
+	AgeRatingACB_PG
+	AgeRatingACB_M
+	AgeRatingACB_MA15
+	AgeRatingACB_R18
+	AgeRatingACB_RC
 )
 
 // AgeRatingService handles all the API calls for the IGDB AgeRating endpoint.
@@ -132,4 +164,16 @@ func (as *AgeRatingService) Fields() ([]string, error) {
 	}
 
 	return f, nil
+}
+
+type AgeRatingWrapper struct {
+	AgeRating
+}
+
+func (ar *AgeRatingWrapper) UnmarshalJSON(data []byte) error {
+	if id, err := strconv.Atoi(string(data)); err == nil {
+		ar.ID = id
+		return nil
+	}
+	return json.Unmarshal(data, &ar.AgeRating)
 }

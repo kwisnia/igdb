@@ -1,6 +1,7 @@
 package igdb
 
 import (
+	"encoding/json"
 	"github.com/Henry-Sarabia/sliceconv"
 	"github.com/pkg/errors"
 	"strconv"
@@ -11,25 +12,25 @@ import (
 // PlatformVersion represents a particular version of a platform.
 // For more information visit: https://api-docs.igdb.com/#platform-version
 type PlatformVersion struct {
-	ID                          int    `json:"id"`
-	Companies                   []int  `json:"companies"`
-	Connectivity                string `json:"connectivity"`
-	CPU                         string `json:"cpu"`
-	Graphics                    string `json:"graphics"`
-	MainManufacturer            int    `json:"main_manufacturer"`
-	Media                       string `json:"media"`
-	Memory                      string `json:"memory"`
-	Name                        string `json:"name"`
-	OS                          string `json:"os"`
-	Output                      string `json:"output"`
-	PlatformLogo                int    `json:"platform_logo"`
-	PlatformVersionReleaseDates []int  `json:"platform_version_release_dates"`
-	Resolutions                 string `json:"resolutions"`
-	Slug                        string `json:"slug"`
-	Sound                       string `json:"sound"`
-	Storage                     string `json:"storage"`
-	Summary                     string `json:"summary"`
-	URL                         string `json:"url"`
+	ID                          int                                 `json:"id"`
+	Companies                   []PlatformVersionCompanyWrapper     `json:"companies"`
+	Connectivity                string                              `json:"connectivity"`
+	CPU                         string                              `json:"cpu"`
+	Graphics                    string                              `json:"graphics"`
+	MainManufacturer            PlatformVersionCompanyWrapper       `json:"main_manufacturer"`
+	Media                       string                              `json:"media"`
+	Memory                      string                              `json:"memory"`
+	Name                        string                              `json:"name"`
+	OS                          string                              `json:"os"`
+	Output                      string                              `json:"output"`
+	PlatformLogo                PlatformLogoWrapper                 `json:"platform_logo"`
+	PlatformVersionReleaseDates []PlatformVersionReleaseDateWrapper `json:"platform_version_release_dates"`
+	Resolutions                 string                              `json:"resolutions"`
+	Slug                        string                              `json:"slug"`
+	Sound                       string                              `json:"sound"`
+	Storage                     string                              `json:"storage"`
+	Summary                     string                              `json:"summary"`
+	URL                         string                              `json:"url"`
 }
 
 // PlatformVersionService handles all the API calls for the IGDB PlatformVersion endpoint.
@@ -115,4 +116,16 @@ func (ps *PlatformVersionService) Fields() ([]string, error) {
 	}
 
 	return f, nil
+}
+
+type PlatformVersionWrapper struct {
+	PlatformVersion
+}
+
+func (pv *PlatformVersionWrapper) UnmarshalJSON(data []byte) error {
+	if id, err := strconv.Atoi(string(data)); err == nil {
+		pv.ID = id
+		return nil
+	}
+	return json.Unmarshal(data, &pv.PlatformVersion)
 }

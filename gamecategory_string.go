@@ -16,11 +16,16 @@ func _() {
 	_ = x[Mod-5]
 	_ = x[Episode-6]
 	_ = x[Season-7]
+	_ = x[Remake-8]
+	_ = x[Remaster-9]
+	_ = x[ExpandedGame-10]
+	_ = x[Port-11]
+	_ = x[Fork-12]
 }
 
-const _GameCategory_name = "MainGameDLCAddonExpansionBundleStandaloneExpansionModEpisodeSeason"
+const _GameCategory_name = "MainGameDLCAddonExpansionBundleStandaloneExpansionModEpisodeSeasonRemakeRemasterExpandedGamePortFork"
 
-var _GameCategory_index = [...]uint8{0, 8, 16, 25, 31, 50, 53, 60, 66}
+var _GameCategory_index = [...]uint8{0, 8, 16, 25, 31, 50, 53, 60, 66, 72, 80, 92, 96, 100}
 
 func (i GameCategory) String() string {
 	if i < 0 || i >= GameCategory(len(_GameCategory_index)-1) {
@@ -38,22 +43,24 @@ func _() {
 	_ = x[StatusEarlyAccess-4]
 	_ = x[StatusOffline-5]
 	_ = x[StatusCancelled-6]
+	_ = x[StatusRumored-7]
+	_ = x[StatusDelisted-8]
 }
 
 const (
 	_GameStatus_name_0 = "StatusReleased"
-	_GameStatus_name_1 = "StatusAlphaStatusBetaStatusEarlyAccessStatusOfflineStatusCancelled"
+	_GameStatus_name_1 = "StatusAlphaStatusBetaStatusEarlyAccessStatusOfflineStatusCancelledStatusRumoredStatusDelisted"
 )
 
 var (
-	_GameStatus_index_1 = [...]uint8{0, 11, 21, 38, 51, 66}
+	_GameStatus_index_1 = [...]uint8{0, 11, 21, 38, 51, 66, 79, 93}
 )
 
 func (i GameStatus) String() string {
 	switch {
 	case i == 0:
 		return _GameStatus_name_0
-	case 2 <= i && i <= 6:
+	case 2 <= i && i <= 8:
 		i -= 2
 		return _GameStatus_name_1[_GameStatus_index_1[i]:_GameStatus_index_1[i+1]]
 	default:

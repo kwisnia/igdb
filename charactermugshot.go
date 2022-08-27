@@ -1,6 +1,7 @@
 package igdb
 
 import (
+	"encoding/json"
 	"github.com/Henry-Sarabia/sliceconv"
 	"github.com/pkg/errors"
 	"strconv"
@@ -96,4 +97,16 @@ func (cs *CharacterMugshotService) Fields() ([]string, error) {
 	}
 
 	return f, nil
+}
+
+type CharacterMugshotWrapper struct {
+	CharacterMugshot
+}
+
+func (cm *CharacterMugshotWrapper) UnmarshalJSON(data []byte) error {
+	if id, err := strconv.Atoi(string(data)); err == nil {
+		cm.ID = id
+		return nil
+	}
+	return json.Unmarshal(data, &cm.CharacterMugshot)
 }

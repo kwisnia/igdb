@@ -1,65 +1,73 @@
 package igdb
 
 import (
+	"encoding/json"
 	"github.com/Henry-Sarabia/sliceconv"
 	"github.com/pkg/errors"
 	"strconv"
 )
+
+type GameWrapper struct {
+	Game
+}
 
 //go:generate gomodifytags -file $GOFILE -struct Game -add-tags json -w
 
 // Game contains information on an IGDB entry for a particular video game.
 // For more information visit: https://api-docs.igdb.com/#game
 type Game struct {
-	ID                    int          `json:"id"`
-	AgeRatings            []int        `json:"age_ratings"`
-	AggregatedRating      float64      `json:"aggregated_rating"`
-	AggregatedRatingCount int          `json:"aggregated_rating_count"`
-	AlternativeNames      []int        `json:"alternative_names"`
-	Artworks              []int        `json:"artworks"`
-	Bundles               []int        `json:"bundles"`
-	Category              GameCategory `json:"category"`
-	Collection            int          `json:"collection"`
-	Cover                 int          `json:"cover"`
-	CreatedAt             int          `json:"created_at"`
-	DLCS                  []int        `json:"dlcs"`
-	Expansions            []int        `json:"expansions"`
-	ExternalGames         []int        `json:"external_games"`
-	FirstReleaseDate      int          `json:"first_release_date"`
-	Follows               int          `json:"follows"`
-	Franchise             int          `json:"franchise"`
-	Franchises            []int        `json:"franchises"`
-	GameEngines           []int        `json:"game_engines"`
-	GameModes             []int        `json:"game_modes"`
-	Genres                []int        `json:"genres"`
-	Hypes                 int          `json:"hypes"`
-	InvolvedCompanies     []int        `json:"involved_companies"`
-	Keywords              []int        `json:"keywords"`
-	MultiplayerModes      []int        `json:"multiplayer_modes"`
-	Name                  string       `json:"name"`
-	ParentGame            int          `json:"parent_game"`
-	Platforms             []int        `json:"platforms"`
-	PlayerPerspectives    []int        `json:"player_perspectives"`
-	Rating                float64      `json:"rating"`
-	RatingCount           int          `json:"rating_count"`
-	ReleaseDates          []int        `json:"release_dates"`
-	Screenshots           []int        `json:"screenshots"`
-	SimilarGames          []int        `json:"similar_games"`
-	Slug                  string       `json:"slug"`
-	StandaloneExpansions  []int        `json:"standalone_expansions"`
-	Status                GameStatus   `json:"status"`
-	Storyline             string       `json:"storyline"`
-	Summary               string       `json:"summary"`
-	Tags                  []Tag        `json:"tags"`
-	Themes                []int        `json:"themes"`
-	TotalRating           float64      `json:"total_rating"`
-	TotalRatingCount      int          `json:"total_rating_count"`
-	UpdatedAt             int          `json:"updated_at"`
-	URL                   string       `json:"url"`
-	VersionParent         int          `json:"version_parent"`
-	VersionTitle          string       `json:"version_title"`
-	Videos                []int        `json:"videos"`
-	Websites              []int        `json:"websites"`
+	ID                    int                        `json:"id"`
+	AgeRatings            []AgeRatingWrapper         `json:"age_ratings"`
+	AggregatedRating      float64                    `json:"aggregated_rating"`
+	AggregatedRatingCount int                        `json:"aggregated_rating_count"`
+	AlternativeNames      []AlternativeNameWrapper   `json:"alternative_names"`
+	Artworks              []ArtworkWrapper           `json:"artworks"`
+	Bundles               []GameWrapper              `json:"bundles"`
+	Category              GameCategory               `json:"category"`
+	Collection            CollectionWrapper          `json:"collection"`
+	Cover                 CoverWrapper               `json:"cover"`
+	CreatedAt             int                        `json:"created_at"`
+	DLCS                  []GameWrapper              `json:"dlcs"`
+	ExpandedGames         []GameWrapper              `json:"expanded_games"`
+	Expansions            []GameWrapper              `json:"expansions"`
+	ExternalGames         []ExternalGameWrapper      `json:"external_games"`
+	FirstReleaseDate      int                        `json:"first_release_date"`
+	Follows               int                        `json:"follows"`
+	Forks                 []GameWrapper              `json:"forks"`
+	Franchise             FranchiseWrapper           `json:"franchise"`
+	Franchises            []FranchiseWrapper         `json:"franchises"`
+	GameEngines           []GameEngineWrapper        `json:"game_engines"`
+	GameModes             []GameModeWrapper          `json:"game_modes"`
+	Genres                []GenreWrapper             `json:"genres"`
+	Hypes                 int                        `json:"hypes"`
+	InvolvedCompanies     []InvolvedCompanyWrapper   `json:"involved_companies"`
+	Keywords              []KeywordWrapper           `json:"keywords"`
+	MultiplayerModes      []MultiplayerModeWrapper   `json:"multiplayer_modes"`
+	Name                  string                     `json:"name"`
+	ParentGame            *GameWrapper               `json:"parent_game"`
+	Platforms             []PlatformWrapper          `json:"platforms"`
+	PlayerPerspectives    []PlayerPerspectiveWrapper `json:"player_perspectives"`
+	Ports                 []GameWrapper              `json:"ports"`
+	Rating                float64                    `json:"rating"`
+	RatingCount           int                        `json:"rating_count"`
+	ReleaseDates          []ReleaseDateWrapper       `json:"release_dates"`
+	Screenshots           []ScreenshotWrapper        `json:"screenshots"`
+	SimilarGames          []GameWrapper              `json:"similar_games"`
+	Slug                  string                     `json:"slug"`
+	StandaloneExpansions  []GameWrapper              `json:"standalone_expansions"`
+	Status                GameStatus                 `json:"status"`
+	Storyline             string                     `json:"storyline"`
+	Summary               string                     `json:"summary"`
+	Tags                  []Tag                      `json:"tags"`
+	Themes                []ThemeWrapper             `json:"themes"`
+	TotalRating           float64                    `json:"total_rating"`
+	TotalRatingCount      int                        `json:"total_rating_count"`
+	UpdatedAt             int                        `json:"updated_at"`
+	URL                   string                     `json:"url"`
+	VersionParent         *GameWrapper               `json:"version_parent"`
+	VersionTitle          string                     `json:"version_title"`
+	Videos                []GameVideoWrapper         `json:"videos"`
+	Websites              []WebsiteWrapper           `json:"websites"`
 }
 
 // GameCategory specifies a type of game content.
@@ -77,6 +85,11 @@ const (
 	Mod
 	Episode
 	Season
+	Remake
+	Remaster
+	ExpandedGame
+	Port
+	Fork
 )
 
 // GameStatus specifies the release status of a specific game.
@@ -91,6 +104,8 @@ const (
 	StatusEarlyAccess
 	StatusOffline
 	StatusCancelled
+	StatusRumored
+	StatusDelisted
 )
 
 // GameService handles all the API
@@ -192,4 +207,12 @@ func (gs *GameService) Fields() ([]string, error) {
 	}
 
 	return f, nil
+}
+
+func (g *GameWrapper) UnmarshalJSON(data []byte) error {
+	if id, err := strconv.Atoi(string(data)); err == nil {
+		g.ID = id
+		return nil
+	}
+	return json.Unmarshal(data, &g.Game)
 }

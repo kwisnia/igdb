@@ -5,7 +5,7 @@ import (
 	"fmt"
 	"log"
 
-	"github.com/Henry-Sarabia/igdb/v2"
+	"github.com/kwisnia/igdb"
 )
 
 var key string
@@ -43,7 +43,7 @@ func main() {
 
 	fmt.Print("The 20 Newest Character Photos:\n\n")
 	for _, v := range ch {
-		mugshot, err := c.CharacterMugshots.Get(v.MugShot, igdb.SetFields("image_id")) // retrieve mugshot ID
+		mugshot, err := c.CharacterMugshots.Get(v.MugShot.ID, igdb.SetFields("image_id")) // retrieve mugshot ID
 		if err != nil {
 			log.Fatal(err)
 		}

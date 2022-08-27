@@ -1,6 +1,7 @@
 package igdb
 
 import (
+	"encoding/json"
 	"github.com/Henry-Sarabia/sliceconv"
 	"github.com/pkg/errors"
 	"strconv"
@@ -12,16 +13,16 @@ import (
 // Used to dig deeper into release dates, platforms, and versions.
 // For more information visit: https://api-docs.igdb.com/#platform-version-release-date
 type PlatformVersionReleaseDate struct {
-	ID              int            `json:"id"`
-	Category        DateCategory   `json:"category"`
-	CreatedAt       int            `json:"created_at"`
-	Date            int            `json:"date"`
-	Human           string         `json:"human"`
-	M               int            `json:"m"`
-	PlatformVersion int            `json:"platform_version"`
-	Region          RegionCategory `json:"region"`
-	UpdatedAt       int            `json:"updated_at"`
-	Y               int            `json:"y"`
+	ID              int                    `json:"id"`
+	Category        DateCategory           `json:"category"`
+	CreatedAt       int                    `json:"created_at"`
+	Date            int                    `json:"date"`
+	Human           string                 `json:"human"`
+	M               int                    `json:"m"`
+	PlatformVersion PlatformVersionWrapper `json:"platform_version"`
+	Region          RegionCategory         `json:"region"`
+	UpdatedAt       int                    `json:"updated_at"`
+	Y               int                    `json:"y"`
 }
 
 // PlatformVersionReleaseDateService handles all the API calls for the IGDB PlatformVersionReleaseDate endpoint.
@@ -107,4 +108,16 @@ func (ps *PlatformVersionReleaseDateService) Fields() ([]string, error) {
 	}
 
 	return f, nil
+}
+
+type PlatformVersionReleaseDateWrapper struct {
+	PlatformVersionReleaseDate
+}
+
+func (cl *PlatformVersionReleaseDateWrapper) UnmarshalJSON(data []byte) error {
+	if id, err := strconv.Atoi(string(data)); err == nil {
+		cl.ID = id
+		return nil
+	}
+	return json.Unmarshal(data, &cl.PlatformVersionReleaseDate)
 }

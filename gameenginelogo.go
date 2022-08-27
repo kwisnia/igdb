@@ -1,6 +1,7 @@
 package igdb
 
 import (
+	"encoding/json"
 	"github.com/Henry-Sarabia/sliceconv"
 	"github.com/pkg/errors"
 	"strconv"
@@ -96,4 +97,16 @@ func (gs *GameEngineLogoService) Fields() ([]string, error) {
 	}
 
 	return f, nil
+}
+
+type GameEngineLogoWrapper struct {
+	GameEngineLogo
+}
+
+func (gel *GameEngineLogoWrapper) UnmarshalJSON(data []byte) error {
+	if id, err := strconv.Atoi(string(data)); err == nil {
+		gel.ID = id
+		return nil
+	}
+	return json.Unmarshal(data, &gel.GameEngineLogo)
 }

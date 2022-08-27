@@ -1,6 +1,7 @@
 package igdb
 
 import (
+	"encoding/json"
 	"github.com/Henry-Sarabia/sliceconv"
 	"github.com/pkg/errors"
 	"strconv"
@@ -102,4 +103,16 @@ func (ps *PlayerPerspectiveService) Fields() ([]string, error) {
 	}
 
 	return f, nil
+}
+
+type PlayerPerspectiveWrapper struct {
+	PlayerPerspective
+}
+
+func (pp *PlayerPerspectiveWrapper) UnmarshalJSON(data []byte) error {
+	if id, err := strconv.Atoi(string(data)); err == nil {
+		pp.ID = id
+		return nil
+	}
+	return json.Unmarshal(data, &pp.PlayerPerspective)
 }
